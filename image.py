@@ -104,12 +104,12 @@ def turn_light(img, scale, offset):
 
 
 
-def convertImage(image,width,height):
-    force = 2
+def convertImage(image,width,height,force=2,alpha=0.8,radius=50):
+    
     rows,cols,channels=image.shape
 
     image = scale(image,width * force,height * force)
-    image = sharpening(image,0.8,50)
+    image = sharpening(image,alpha,radius)
     image = scale(image,width,height)
     return image
 
@@ -122,9 +122,9 @@ def convertLocalImage(path,width,height):
 
     return image
 
-def convertURLImage(url,width,height):
+def convertURLImage(url,width,height,force,alpha,radius):
     image = url_to_image(url)
-    image = convertImage(image,width,height)
+    image = convertImage(image,width,height,force,alpha,radius)
     img_encode = cv2.imencode('.jpg', image)[1]
     return img_encode.tobytes()
 

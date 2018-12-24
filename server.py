@@ -22,13 +22,17 @@ class Handler(tornado.web.RequestHandler):
         image_url = self.get_argument("image_url", default="")
         width = int(self.get_argument("width", default=1080))
         height = int(self.get_argument("height", default=1080))
+        force = int(self.get_argument("force", default=2))
+        alpha = int(self.get_argument("alpha", default=0.8))
+        radius = int(self.get_argument("radius", default=50))
+
         print image_url
         if not image_url:
             result = {}
             result["msg"] = "error"
             self.write(json_encode(result))
         else:
-            byte = image.convertURLImage(image_url,width,height)
+            byte = image.convertURLImage(image_url,width,height,force,alpha,radius)
             self.write(byte)
             self.set_header("Content-type", "image/jpeg")
 
