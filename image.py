@@ -17,7 +17,7 @@ def url_to_image(url):
     return image
 
 #缩放
-def scale(img,width,height):
+def scaleImage(img,width,height):
     rows,cols,channels=img.shape
     ratio1 = float(cols) / float(rows)
     if width == 0:
@@ -38,7 +38,7 @@ def scale(img,width,height):
     return image
 
 #锐化
-def sharpening(img,alpha,radius):
+def sharpening(img,force,smoth):
 #    kernel = np.array(
 #                    [[0, -1, 0],
 #                    [-1, 5, -1],
@@ -55,17 +55,12 @@ def sharpening(img,alpha,radius):
 #                             [1,1,1]])
 #
     dst = cv2.filter2D(img, -1, kernel=kernel)
-    overlapping = cv2.addWeighted(img, 1-alpha, dst, alpha, 0)
-    overlapping = bilateral(overlapping,8,radius)
+    overlapping = cv2.addWeighted(img, 1-force, dst, force, 0)
+    overlapping = bilateral(overlapping,12,smoth)
 
 
     return overlapping
 
-#    blurred=cv2.GaussianBlur(img,(0,0),1,None,1)
-#    lowContrastMask = abs(img - blurred) < threshold
-#    sharpened = img*(1+amount) + blurred*(-amount)
-#    image=cv2.bitwise_or(sharpened.astype(np.uint8),lowContrastMask.astype(np.uint8))
-#    return image
 
 #高斯模糊
 def gaussian(img):
@@ -108,52 +103,33 @@ def turn_light(img, scale, offset):
 
 
 
-def convertImage(image,width,height,force,alpha,radius):
+def convertImage(image,width,height,scale,force,smoth):
     
     rows,cols,channels=image.shape
 
-    image = scale(image,width * force,height * force)
-    image = sharpening(image,alpha,radius)
-    image = scale(image,width,height)
+    image = scaleImage(image,width * scale,height * scale)
+    image = sharpening(image,force,smoth)
+    image = scaleImage(image,width,height)
     return image
 
 
-def convertLocalImage(path,width=0,height=0,force=1,alpha=0,radius=0):
+def convertLocalImage(path,width=0,height=0,scale=1,force=0,smoth=0):
     if path.find('http') == -1:
         image = cv2.imread(path)
     else :
         image = url_to_image(path)
 
-    image = convertImage(image,width,height,force,alpha,radius)
+    image = convertImage(image,width,height,scale,force,smoth)
     cv2.imshow(path+"_shape", image)
     return image
 
 
 
-def convertURLImage(url,width=0,height=0,force=1,alpha=0,radius=0):
+def convertURLImage(url,width=0,height=0,scale=1,force=0,smoth=0):
     image = url_to_image(url)
-    image = convertImage(image,width,height,force,alpha,radius)
+    image = convertImage(image,width,height,scale,force,smoth)
     img_encode = cv2.imencode('.jpg', image)[1]
     return img_encode.tobytes()
 
 
-## initialize the list of image URLs to download
-#url = "https://upload-images.jianshu.io/upload_images/1690384-722e7c32ff6b44b2.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/526"
-#
-#
-#
-##image = url_to_image(url)
-#
-#files = ["1.jpg","2.jpg","3.jpg","4.jpg","5.jpg","6.jpg"]
-#for file in files:
-#    image = cv2.imread(file)
-#    #image = scale(image,300,300)
-#    image = scale(image,800,800)
-#
-#    cv2.imshow(file, scale(image,400,400))
-#    image = bilateral(image,9,5)
-#    image = scale(image,400,400)
-#    openShapening(file,image,0,0,0.1)
-#
-#
-#cv2.waitKey(0)
+
