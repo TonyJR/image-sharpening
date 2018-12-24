@@ -23,8 +23,8 @@ class Handler(tornado.web.RequestHandler):
         width = int(self.get_argument("width", default=0))
         height = int(self.get_argument("height", default=0))
         force = int(self.get_argument("force", default=2))
-        alpha = int(self.get_argument("alpha", default=0.8))
-        radius = int(self.get_argument("radius", default=50))
+        alpha = int(self.get_argument("alpha", default=0.5))
+        radius = int(self.get_argument("radius", default=30))
 
         print image_url
         if not image_url:
@@ -54,7 +54,7 @@ class ImageServer(object):
         tornado.ioloop.IOLoop.current().start()
 
 if __name__ == "__main__":
-    server_port = "8080"
+    server_port = "80"
     server = ImageServer(server_port)
     print "begin server"
     server.process()

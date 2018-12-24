@@ -39,29 +39,25 @@ def scale(img,width,height):
 
 #锐化
 def sharpening(img,alpha,radius):
-    kernel = np.array(
-                    [[0, -1, 0],
-                    [-1, 5, -1],
-                    [0, -1, 0]], np.float32)
 #    kernel = np.array(
-#                      [[0,1,0],
-#                       [1,-4,1],
-#                       [0,1,0]], np.float32)
-#    kernel = np.array([
-#                             [-1,-1,-1,-1,-1],
-#                             [-1,2,2,2,-1],
-#                             [-1,2,8,2,-1],
-#                             [-1,2,2,2,-1],
-#                             [-1,-1,-1,-1,-1]])/8.0
+#                    [[0, -1, 0],
+#                    [-1, 5, -1],
+#                    [0, -1, 0]], np.float32)
+    kernel = np.array([
+                             [-1,-1,-1,-1,-1],
+                             [-1,2,2,2,-1],
+                             [-1,2,8,2,-1],
+                             [-1,2,2,2,-1],
+                             [-1,-1,-1,-1,-1]])/8.0
 #    kernel = np.array([
 #                             [1,1,1],
 #                             [1,-7,1],
 #                             [1,1,1]])
 #
     dst = cv2.filter2D(img, -1, kernel=kernel)
-#    dst = bilateral(dst,4,radius)
     overlapping = cv2.addWeighted(img, 1-alpha, dst, alpha, 0)
-    
+    overlapping = bilateral(overlapping,8,radius)
+
 
     return overlapping
 
@@ -112,7 +108,7 @@ def turn_light(img, scale, offset):
 
 
 
-def convertImage(image,width,height,force=2,alpha=0.8,radius=50):
+def convertImage(image,width,height,force,alpha,radius):
     
     rows,cols,channels=image.shape
 
@@ -122,19 +118,24 @@ def convertImage(image,width,height,force=2,alpha=0.8,radius=50):
     return image
 
 
-def convertLocalImage(path,width,height):
-    image = cv2.imread(path)
-    cv2.imshow(path, scale(image,width,height).copy())
-    image = convertImage(image,width,height)
-    cv2.imshow(path+"_shape", image)
+def convertLocalImage(path,width=0,height=0,force=1,alpha=0,radius=0):
+    if path.find('http') == -1:
+        image = cv2.imread(path)
+    else :
+        image = url_to_image(path)
 
+    image = convertImage(image,width,height,force,alpha,radius)
+    cv2.imshow(path+"_shape", image)
     return image
 
-def convertURLImage(url,width,height,force,alpha,radius):
+
+
+def convertURLImage(url,width=0,height=0,force=1,alpha=0,radius=0):
     image = url_to_image(url)
     image = convertImage(image,width,height,force,alpha,radius)
     img_encode = cv2.imencode('.jpg', image)[1]
     return img_encode.tobytes()
+
 
 ## initialize the list of image URLs to download
 #url = "https://upload-images.jianshu.io/upload_images/1690384-722e7c32ff6b44b2.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/526"
