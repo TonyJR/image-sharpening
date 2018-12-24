@@ -19,13 +19,21 @@ def url_to_image(url):
 #缩放
 def scale(img,width,height):
     rows,cols,channels=img.shape
-    ratio1 = float(width) / float(height)
-    ratio2 = float(cols) / float(rows)
-    
-    if ratio1 < ratio2:
-        height = width / ratio2
+    ratio1 = float(cols) / float(rows)
+    if width == 0:
+        if height == 0:
+            return img
+        else:
+            width = height * ratio1
+    elif height == 0:
+        height = width / ratio1
     else :
-        width = height * ratio2
+        ratio2 = float(width) / float(height)
+        if ratio1 > ratio2:
+            height = width / ratio1
+        else :
+            width = height * ratio1
+
     image = cv2.resize(img,(int(width),int(height)),cv2.INTER_LINEAR)
     return image
 
