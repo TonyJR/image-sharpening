@@ -50,7 +50,7 @@ class ImageServer(object):
         tornado.ioloop.IOLoop.current().start()
 
 if __name__ == "__main__":
-    server_port = "6060"
+    server_port = "80"
     server = ImageServer(server_port)
     print "begin server"
     server.process()
