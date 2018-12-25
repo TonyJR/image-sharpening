@@ -25,7 +25,7 @@ class Executor(ThreadPoolExecutor):
     
     def __new__(cls, *args, **kwargs):
         if not getattr(cls, '_instance', None):
-            cls._instance = ThreadPoolExecutor(max_workers=10)
+            cls._instance = ThreadPoolExecutor(max_workers=30)
         return cls._instance
 
 

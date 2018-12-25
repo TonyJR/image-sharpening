@@ -65,7 +65,7 @@ def sharpening(img,force,smoth):
 #
     dst = cv2.filter2D(img, -1, kernel=kernel)
     overlapping = cv2.addWeighted(img, 1-force, dst, force, 0)
-    overlapping = bilateral(overlapping,12,smoth)
+    overlapping = bilateral(overlapping,6,smoth)
 
 
     return overlapping
