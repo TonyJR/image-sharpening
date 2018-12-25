@@ -15,6 +15,7 @@ def url_to_image(url):
         # cv2.imdecode()函数将数据解码成Opencv图像格式
         image = cv2.imdecode(image, cv2.IMREAD_COLOR)
     except:
+        print("url下载失败"+url)
         image = cv2.imread("1.jpg")
     finally:
         # return the image
