@@ -41,6 +41,8 @@ def scaleImage(img,width,height):
         else :
             width = height * ratio1
 
+    if width >= rows:
+        return img
     image = cv2.resize(img,(int(width),int(height)),cv2.INTER_LINEAR)
     return image
 
@@ -116,7 +118,8 @@ def convertImage(image,width,height,scale,force,smoth):
 
     image = scaleImage(image,width * scale,height * scale)
     image = sharpening(image,force,smoth)
-    image = scaleImage(image,width,height)
+    if scale != 1:
+        image = scaleImage(image,width,height)
     return image
 
 
