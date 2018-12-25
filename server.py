@@ -3,20 +3,35 @@
 
 import sys
 import traceback
+import datetime
 from StringIO import StringIO
 
 import requests
 import tornado
 import tornado.ioloop
 import tornado.web
+import tornado.gen
 import image
 import os
+import time
+
+from concurrent.futures import ThreadPoolExecutor
 
 reload(sys)
 sys.setdefaultencoding('utf8')
 
+class Executor(ThreadPoolExecutor):
+    _instance = None
+    
+    def __new__(cls, *args, **kwargs):
+        if not getattr(cls, '_instance', None):
+            cls._instance = ThreadPoolExecutor(max_workers=10)
+        return cls._instance
+
+
 
 class Handler(tornado.web.RequestHandler):
+    executor = Executor()
     
     def set_default_headers(self):
         self.set_header("Access-Control-Allow-Origin", "*") # 这个地方可以写域名
@@ -25,29 +40,27 @@ class Handler(tornado.web.RequestHandler):
         self.set_header("Access-Control-Allow-Max-Age","1728000")
         self.set_header("Cache-Control","max-age=2628000")
 
-    
-    def get(self):
-        
+    @tornado.concurrent.run_on_executor
+    def get(self, *args, **kwargs):
         image_url = self.get_argument("image_url", default="")
-        width = int(self.get_argument("width", default=0))
-        height = int(self.get_argument("height", default=0))
+        width = int(self.get_argument("width", default=300))
+        height = int(self.get_argument("height", default=250))
         force = float(self.get_argument("force", default=0.5))
         smoth = int(self.get_argument("smoth", default=15))
-
-        print image_url
+        
         if not image_url:
             result = {}
             result["msg"] = "error"
             self.write(json_encode(result))
         else:
-#            image_url = urllib.urldecode(image_url)
-            byte = image.convertURLImage(image_url,width,height,1,force,smoth)
-            self.write(byte)
+            response = self.converImage(image_url,width,height,force,smoth)
             self.set_header("Content-type", "image/jpeg")
+            self.write(response)
 
-    
-            
-    
+    def converImage(self,image_url,width,height,force,smoth):
+        bytes = image.convertURLImage(image_url,width,height,1,force,smoth)
+        return bytes
+
     def process(self, image_url):
         print image_url
         return ""
@@ -59,6 +72,7 @@ class ImageServer(object):
     
     def process(self):
         app = tornado.web.Application([(r"/image?", Handler)], )
+        app.listen("8080")
         app = tornado.httpserver.HTTPServer(app, ssl_options={
                                       "certfile": os.path.join(os.path.abspath("."), "../cert/test-kv-pub.ures.shiqichuban.com/test-kv-pub.ures.shiqichuban.com.pem"),
                                       "keyfile": os.path.join(os.path.abspath("."), "../cert/test-kv-pub.ures.shiqichuban.com/test-kv-pub.ures.shiqichuban.com.key"),
