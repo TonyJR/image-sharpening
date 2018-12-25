@@ -41,8 +41,8 @@ def scaleImage(img,width,height):
         else :
             width = height * ratio1
 
-    if width >= rows:
-        return img
+#    if width >= rows:
+#        return img
     image = cv2.resize(img,(int(width),int(height)),cv2.INTER_LINEAR)
     return image
 
@@ -65,7 +65,7 @@ def sharpening(img,force,smoth):
 #
     dst = cv2.filter2D(img, -1, kernel=kernel)
     overlapping = cv2.addWeighted(img, 1-force, dst, force, 0)
-#    overlapping = bilateral(overlapping,6,smoth)
+    overlapping = bilateral(overlapping,12,smoth)
 
 
     return overlapping
