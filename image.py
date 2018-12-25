@@ -2,10 +2,12 @@
 import numpy as np
 import urllib
 import cv2
+import time
 
 # URL到图片
 def url_to_image(url):
     try:
+        
         # download the image, convert it to a NumPy array, and then read
         # it into OpenCV format
         resp = urllib.urlopen(url)
@@ -131,9 +133,18 @@ def convertLocalImage(path,width=0,height=0,scale=1,force=0,smoth=0):
 
 
 def convertURLImage(url,width=0,height=0,scale=1,force=0,smoth=0):
+    start = time.time()
     image = url_to_image(url)
+    
+    t1 = time.time() - start;
+    start = time.time()
     image = convertImage(image,width,height,scale,force,smoth)
     img_encode = cv2.imencode('.jpg', image)[1]
+    
+    t2 = time.time() - start;
+    start = time.time()
+    
+    print("下载"+str(t1)+"锐化"+str(t2)+"\n"+url)
     return img_encode.tobytes()
 
 
