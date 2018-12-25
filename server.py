@@ -10,6 +10,7 @@ import tornado
 import tornado.ioloop
 import tornado.web
 import image
+import os
 
 reload(sys)
 sys.setdefaultencoding('utf8')
