@@ -41,7 +41,7 @@ class Handler(tornado.web.RequestHandler):
             self.write(json_encode(result))
         else:
 #            image_url = urllib.urldecode(image_url)
-            byte = image.convertURLImage(image_url,width,height,2,force,smoth)
+            byte = image.convertURLImage(image_url,width,height,1,force,smoth)
             self.write(byte)
             self.set_header("Content-type", "image/jpeg")
 
