@@ -136,6 +136,8 @@ def convertURLImage(url,width=0,height=0,scale=1,force=0,smoth=0):
     start = time.time()
     image = url_to_image(url)
     
+    rows,cols,channels=image.shape
+    
     t1 = time.time() - start;
     start = time.time()
     image = convertImage(image,width,height,scale,force,smoth)
@@ -144,7 +146,7 @@ def convertURLImage(url,width=0,height=0,scale=1,force=0,smoth=0):
     t2 = time.time() - start;
     start = time.time()
     
-    print("下载"+str(t1)+"锐化"+str(t2)+"\n"+url)
+    print("下载"+str(t1)+"锐化"+str(t2)+"\n"+str(cols)+"x"+str(rows)+"_"+str(width)+"x"+str(height)+"\n"+url)
     return img_encode.tobytes()
 
 
