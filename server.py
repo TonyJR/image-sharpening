@@ -27,7 +27,6 @@ class Handler(tornado.web.RequestHandler):
     
     def get(self):
         
-        
         image_url = self.get_argument("image_url", default="")
         width = int(self.get_argument("width", default=0))
         height = int(self.get_argument("height", default=0))
@@ -45,7 +44,7 @@ class Handler(tornado.web.RequestHandler):
             self.write(byte)
             self.set_header("Content-type", "image/jpeg")
 
-
+    
             
     
     def process(self, image_url):
@@ -60,14 +59,15 @@ class ImageServer(object):
     def process(self):
         app = tornado.web.Application([(r"/image?", Handler)], )
         app = tornado.httpserver.HTTPServer(app, ssl_options={
-                                      "certfile": os.path.join(os.path.abspath("."), "test-kv-pub.ures.shiqichuban.com.crt"),
-                                      "keyfile": os.path.join(os.path.abspath("."), "test-kv-pub.ures.shiqichuban.com.key"),
+                                      "certfile": os.path.join(os.path.abspath("."), "../cert/test-kv-pub.ures.shiqichuban.com/test-kv-pub.ures.shiqichuban.com.pem"),
+                                      "keyfile": os.path.join(os.path.abspath("."), "../cert/test-kv-pub.ures.shiqichuban.com/test-kv-pub.ures.shiqichuban.com.key"),
                                       })
         app.listen(self.port)
         tornado.ioloop.IOLoop.current().start()
 
 if __name__ == "__main__":
-    server_port = "80"
+    server_port = "443"
     server = ImageServer(server_port)
     print "begin server"
+
     server.process()
