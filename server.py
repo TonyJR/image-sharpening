@@ -20,8 +20,9 @@ class Handler(tornado.web.RequestHandler):
     def set_default_headers(self):
         print("setting headers!!!")
         self.set_header("Access-Control-Allow-Origin", "*") # 这个地方可以写域名
-        self.set_header("Access-Control-Allow-Headers", "x-requested-with")
+        self.set_header("Access-Control-Allow-Headers", "Content-Type, Content-MD5, Accept, Accept-Encoding, X-Shiqi-Content-Type, X-Shiqi-Content-Disposition, X-Shiqi-Content-Md5, X-Shiqi-Ctime, X-Shiqi-Filename, X-Shiqi-Position, Refer, User-Agent, Origin, Authorization")
         self.set_header("Access-Control-Allow-Methods", "POST, GET, OPTIONS")
+        self.set_header("Access-Control-Allow-Max-Age","1728000")
     
     def get(self):
         
