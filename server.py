@@ -70,9 +70,9 @@ class ImageServer(object):
     def __init__(self, port):
         self.port = port
     
-    def process(self,testPort):
+    def process(self,server_port):
         app = tornado.web.Application([(r"/image?", Handler)], )
-        app.listen(testPort)
+        app.listen(server_port)
         
 #        dir = os.path.dirname(os.path.abspath(sys.argv[0]))
 #        dir = os.path.dirname(dir)
@@ -91,4 +91,4 @@ if __name__ == "__main__":
 
     server = ImageServer(server_port)
     print "begin server"
-    server.process()
+    server.process(server_port)
