@@ -48,24 +48,34 @@ def scaleImage(img,width,height):
 
 #锐化
 def sharpening(img,force,smoth):
-#    kernel = np.array(
-#                    [[0, -1, 0],
-#                    [-1, 5, -1],
-#                    [0, -1, 0]], np.float32)
-    kernel = np.array([
-                             [-1,-1,-1,-1,-1],
-                             [-1,2,2,2,-1],
-                             [-1,2,8,2,-1],
-                             [-1,2,2,2,-1],
-                             [-1,-1,-1,-1,-1]])/8.0
+    
+#    kernel = np.array([
+#                             [-1,-1,-1,-1,-1],
+#                             [-1,2,2,2,-1],
+#                             [-1,2,8,2,-1],
+#                             [-1,2,2,2,-1],
+#                             [-1,-1,-1,-1,-1]])/8.0
 #    kernel = np.array([
 #                             [1,1,1],
 #                             [1,-7,1],
 #                             [1,1,1]])
 #
-    dst = cv2.filter2D(img, -1, kernel=kernel)
-    overlapping = cv2.addWeighted(img, 1-force, dst, force, 0)
-    overlapping = bilateral(overlapping,6,smoth)
+
+    if force == 0:
+        overlapping = img
+    else:
+        kernel = np.array(
+                          [[0, -1, 0],
+                           [-1, 5, -1],
+                           [0, -1, 0]], np.float32)
+        dst = cv2.filter2D(img, -1, kernel=kernel)
+        if force == 1:
+            overlapping = dst
+        else:
+            overlapping = cv2.addWeighted(img, 1-force, dst, force, 0)
+
+    if smoth > 0:
+        overlapping = bilateral(overlapping,6,smoth)
 
 
     return overlapping
