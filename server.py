@@ -46,7 +46,7 @@ class Handler(tornado.web.RequestHandler):
         width = int(self.get_argument("width", default=0))
         height = int(self.get_argument("height", default=0))
         force = float(self.get_argument("force", default=1))
-        smoth = int(self.get_argument("smoth", default=15))
+        smoth = int(self.get_argument("smoth", default=100))
         
         if not image_url:
             result = {}
