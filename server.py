@@ -74,9 +74,12 @@ class ImageServer(object):
         app = tornado.web.Application([(r"/image?", Handler)], )
         if testPort:
             app.listen(testPort)
+        
+        dir = os.path.dirname(os.path.abspath(sys.argv[0]))
+        dir = os.path.dirname(dir)
         app = tornado.httpserver.HTTPServer(app, ssl_options={
-                                      "certfile": os.path.join(os.path.abspath(sys.argv[0]), "../cert/test-kv-pub.ures.shiqichuban.com/test-kv-pub.ures.shiqichuban.com.pem"),
-                                      "keyfile": os.path.join(os.path.abspath(sys.argv[0]), "../cert/test-kv-pub.ures.shiqichuban.com/test-kv-pub.ures.shiqichuban.com.key"),
+                                      "certfile": os.path.join(dir, "/cert/test-kv-pub.ures.shiqichuban.com/test-kv-pub.ures.shiqichuban.com.pem"),
+                                      "keyfile": os.path.join(dir, "/cert/test-kv-pub.ures.shiqichuban.com/test-kv-pub.ures.shiqichuban.com.key"),
                                       })
         app.listen(self.port)
         tornado.ioloop.IOLoop.current().start()
