@@ -43,10 +43,10 @@ class Handler(tornado.web.RequestHandler):
     @tornado.concurrent.run_on_executor
     def get(self, *args, **kwargs):
         image_url = self.get_argument("image_url", default="")
-        width = int(self.get_argument("width", default=300))
-        height = int(self.get_argument("height", default=250))
+        width = int(self.get_argument("width", default=0))
+        height = int(self.get_argument("height", default=0))
         force = float(self.get_argument("force", default=0.5))
-        smoth = int(self.get_argument("smoth", default=15))
+        smoth = int(self.get_argument("smoth", default=30))
         
         if not image_url:
             result = {}
@@ -58,7 +58,7 @@ class Handler(tornado.web.RequestHandler):
             self.write(response)
 
     def converImage(self,image_url,width,height,force,smoth):
-        bytes = image.convertURLImage(image_url,width,height,1,force,smoth)
+        bytes = image.convertURLImage(image_url,width,height,2,force,smoth)
         return bytes
 
     def process(self, image_url):
