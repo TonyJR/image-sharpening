@@ -70,9 +70,10 @@ class ImageServer(object):
     def __init__(self, port):
         self.port = port
     
-    def process(self):
+    def process(self,testPort=None):
         app = tornado.web.Application([(r"/image?", Handler)], )
-        app.listen("8080")
+        if testPort:
+            app.listen(testPort)
         app = tornado.httpserver.HTTPServer(app, ssl_options={
                                       "certfile": os.path.join(os.path.abspath("."), "../cert/test-kv-pub.ures.shiqichuban.com/test-kv-pub.ures.shiqichuban.com.pem"),
                                       "keyfile": os.path.join(os.path.abspath("."), "../cert/test-kv-pub.ures.shiqichuban.com/test-kv-pub.ures.shiqichuban.com.key"),
@@ -81,8 +82,14 @@ class ImageServer(object):
         tornado.ioloop.IOLoop.current().start()
 
 if __name__ == "__main__":
-    server_port = "443"
+    if len(sys.argv)>1:
+        server_port = sys.argv[1]
+    else:
+        server_port = 443
+
     server = ImageServer(server_port)
     print "begin server"
-
-    server.process()
+    if len(sys.argv)>2:
+        server.process(sys.argv[2])
+    else:
+        server.process()
