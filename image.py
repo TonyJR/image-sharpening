@@ -46,9 +46,17 @@ def scaleImage(img,width,height):
     image = cv2.resize(img,(int(width),int(height)),cv2.INTER_LINEAR)
     return image
 
+#高反差保留
+def sobel(img):
+    x=cv2.Sobel(img,cv2.CV_16S,1,0)
+    y=cv2.Sobel(img,cv2.CV_16S,0,1)
+    absx=cv2.convertScaleAbs(x)
+    absy=cv2.convertScaleAbs(y)
+    dist=cv2.addWeighted(absx,0.5,absy,0.5,0)
+    return dist
+
 #锐化
 def sharpening(img,force,smoth):
-    
     
 #    kernel = np.array([
 #                             [1,1,1],
@@ -59,25 +67,27 @@ def sharpening(img,force,smoth):
     if force == 0:
         overlapping = img
     else:
+#        kernel = np.array(
+#                          [[0, -1, 0],
+#                           [-1, 5, -1],
+#                           [0, -1, 0]], np.float32)
+#        dst = cv2.filter2D(dst, -1, kernel=kernel)
+        dst = img#sobel(img)
         kernel = np.array([
                            [-1,-1,-1,-1,-1],
                            [-1,2,2,2,-1],
                            [-1,2,8,2,-1],
                            [-1,2,2,2,-1],
                            [-1,-1,-1,-1,-1]])/8.0
-#        kernel = np.array(
-#                          [[0, -1, 0],
-#                           [-1, 5, -1],
-#                           [0, -1, 0]], np.float32)
-        dst = cv2.filter2D(img, -1, kernel=kernel)
-        
+        dst = cv2.filter2D(dst, -1, kernel=kernel)
+        if smoth > 0:
+            img = bilateral(img,6,smoth)
         
         if force == 1:
             overlapping = dst
         else:
             overlapping = cv2.addWeighted(img, 1-force, dst, force, 0)
-        if smoth > 0:
-            overlapping = bilateral(overlapping,30,smoth)
+
 
 
 
