@@ -53,11 +53,12 @@ def sobel(img):
     absx=cv2.convertScaleAbs(x)
     absy=cv2.convertScaleAbs(y)
     dist=cv2.addWeighted(absx,0.5,absy,0.5,0)
+    force = 0.1
+    dist = cv2.addWeighted(img, 1, dist, force, 0)
     return dist
 
 #锐化
 def sharpening(img,force,smoth):
-    
 #    kernel = np.array([
 #                             [1,1,1],
 #                             [1,-7,1],
@@ -80,14 +81,14 @@ def sharpening(img,force,smoth):
                            [-1,2,2,2,-1],
                            [-1,-1,-1,-1,-1]])/8.0
         dst = cv2.filter2D(dst, -1, kernel=kernel)
-        if smoth > 0:
-            img = bilateral(img,6,smoth)
+
         
         if force == 1:
             overlapping = dst
         else:
             overlapping = cv2.addWeighted(img, 1-force, dst, force, 0)
-
+        if smoth > 0:
+            overlapping = bilateral(overlapping,6,smoth)
 
 
 
@@ -140,9 +141,10 @@ def convertImage(image,width,height,scale,force,smoth):
     rows,cols,channels=image.shape
 
     image = scaleImage(image,width * scale,height * scale)
-    image = sharpening(image,force,smoth)
+    image = sharpening(image,force,smoth/scale)
     if scale != 1:
         image = scaleImage(image,width,height)
+    image = sobel(image)
     return image
 
 
