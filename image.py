@@ -249,16 +249,17 @@ def convertURLImage(url,width=0,height=0,scale=1,force=0,smoth=0):
     except Exception as e:
         print "修改orientation失败"
 
-#图片转码
-    image = cv2.imread(path)
-    img_encode = cv2.imencode('.jpg', image)[1]
-
+##图片转码
+#    image = cv2.imread(path)
+#    img_encode = cv2.imencode('.jpg', image)[1]
+    with open(path, 'r') as f:
+    result = f.read()
 
     print("下载"+str(t1)+"锐化"+str(t2)+"\n"+str(cols)+"x"+str(rows)+"_"+str(width)+"x"+str(height)+"\n"+url)
-#    if url.find('http') != -1:
-#        os.remove(path)
+    if url.find('http') != -1:
+        os.remove(path)
 
-    return img_encode.tobytes()
+    return result
 
 
 
