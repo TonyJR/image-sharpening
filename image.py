@@ -3,6 +3,33 @@ import numpy as np
 import urllib
 import cv2
 import time
+import os
+import random
+import pexif
+
+
+#保存图片
+def save_img(img_url):
+    #保存图片到磁盘文件夹 file_path中，默认为当前脚本运行目录下的 book\img文件夹
+    try:
+        
+        #下载图片，并保存到文件夹中
+        response = urllib.urlopen(img_url)
+        
+        
+        nowTime = time.time()#生成当前的时间
+        randomNum = random.randint(0,100000)#生成随机数n,其中0<=n<=100
+        filename = "temp/"+str(nowTime) + "_" + str(randomNum)+".jpg"
+        
+        with open(filename, 'wb') as f:
+            f.write(response.read())
+    
+        return filename
+    except IOError as e:
+        print '文件操作失败',e
+    except Exception as e:
+        print '错误 ：',e
+
 
 # URL到图片
 def url_to_image(url):
@@ -149,33 +176,84 @@ def convertImage(image,width,height,scale,force,smoth):
 
 
 def convertLocalImage(path,width=0,height=0,scale=1,force=0,smoth=0):
-    if path.find('http') == -1:
-        image = cv2.imread(path)
-    else :
-        image = url_to_image(path)
+    
+    
+    img = pexif.JpegFile.fromFile(path)
+    orientation = img.exif.primary.Orientation
+    img.exif.primary.Orientation = [1]
+    img.writeFile(path)
 
+
+
+    image = cv2.imread(path)
     image = convertImage(image,width,height,scale,force,smoth)
+    cv2.imwrite(path,image)
+
+
+    img = pexif.JpegFile.fromFile(path)
+    img.exif.primary.Orientation = orientation
+    img.writeFile(path)
+
+    image = cv2.imread(path)
     cv2.imshow(path+"_shape", image)
-    return image
+
+    img_encode = cv2.imencode('.jpg', image)[1]
+
+    return img_encode.tobytes()
 
 
 
 def convertURLImage(url,width=0,height=0,scale=1,force=0,smoth=0):
     start = time.time()
-    image = url_to_image(url)
     
+    if url.find('http') != -1:
+        path = save_img(url)
+    else:
+        path = url
+    
+    if len(path) <= 0:
+        return ""
+
+    img = pexif.JpegFile.fromFile(path)
+    orientation = img.exif.primary.Orientation
+    img.exif.primary.Orientation = [1]
+    img.writeFile(path)
+
+    
+    image = cv2.imread(path)
     rows,cols,channels=image.shape
-    
+
     t1 = time.time() - start;
     start = time.time()
+#锐化图片
     image = convertImage(image,width,height,scale,force,smoth)
-    img_encode = cv2.imencode('.jpg', image)[1]
-    
+    cv2.imwrite(path,image)
     t2 = time.time() - start;
     start = time.time()
+
     
+#修改orientation
+    img = pexif.JpegFile.fromFile(path)
+    img.exif.primary.Orientation = orientation
+    img.writeFile(path)
+
+#图片转码
+    image = cv2.imread(path)
+    img_encode = cv2.imencode('.jpg', image)[1]
+
+
     print("下载"+str(t1)+"锐化"+str(t2)+"\n"+str(cols)+"x"+str(rows)+"_"+str(width)+"x"+str(height)+"\n"+url)
+    if url.find('http') != -1:
+        os.remove(path)
+
     return img_encode.tobytes()
+
+
+
+    
+
+    
+
 
 
 

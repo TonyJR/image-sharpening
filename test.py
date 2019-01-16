@@ -3,10 +3,15 @@
 
 import image
 import cv2
+import pexif
+import urllib
 
 
-files = ["https://img1.360buyimg.com/pop/jfs/t1/25083/31/1438/41872/5c120ac3Ea1bf3da5/a66357ea96a6917b.jpg","1.jpg","7.jpg","8.jpg"]
+#resp = urllib.urlopen("https://res.shiqichuban.com/v1/image/get/0oM0PYYOqT8Wcbc9EcUjHwfQhFFz7ZX9rAlwj9khYcylwzw_2Ia9NBhTM8zWY0KxVQL0fkAxkqptgbpFCgiGxQ")
+#img = pexif.JpegFile.fromFd(resp)
+#print(img.exif.primary.Orientation)
+
+files = ["1.png"]
 for file in files:
-    image.convertLocalImage(file,300,0,2,0.5,30)
+    image.convertURLImage(file,300,0,2,0.5,30)
 
-cv2.waitKey(0)
