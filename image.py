@@ -206,6 +206,7 @@ def convertLocalImage(path,width=0,height=0,scale=1,force=0,smoth=0):
 def convertURLImage(url,width=0,height=0,scale=1,force=0,smoth=0):
     start = time.time()
     
+    
     if url.find('http') != -1:
         path = save_img(url)
     else:
@@ -215,9 +216,10 @@ def convertURLImage(url,width=0,height=0,scale=1,force=0,smoth=0):
         return ""
 
 
-    img = pexif.JpegFile.fromFile(path)
+
 
     try:
+        img = pexif.JpegFile.fromFile(path)
         orientation = img.exif.primary.Orientation
         img.exif.primary.Orientation = [1]
         img.writeFile(path)
@@ -253,8 +255,8 @@ def convertURLImage(url,width=0,height=0,scale=1,force=0,smoth=0):
 
 
     print("下载"+str(t1)+"锐化"+str(t2)+"\n"+str(cols)+"x"+str(rows)+"_"+str(width)+"x"+str(height)+"\n"+url)
-    if url.find('http') != -1:
-        os.remove(path)
+#    if url.find('http') != -1:
+#        os.remove(path)
 
     return img_encode.tobytes()
 
