@@ -19,7 +19,7 @@ def save_img(img_url):
         
         nowTime = time.time()#生成当前的时间
         randomNum = random.randint(0,100000)#生成随机数n,其中0<=n<=100
-        filename = "temp/"+str(nowTime) + "_" + str(randomNum)+".jpg"
+        filename = "/tmp/com.shiqichuban.image-sharpening/"+str(nowTime) + "_" + str(randomNum)+".jpg"
         
         with open(filename, 'wb') as f:
             f.write(response.read())
@@ -29,7 +29,7 @@ def save_img(img_url):
         print '文件操作失败',e
     except Exception as e:
         print '错误 ：',e
-
+        return ""
 
 # URL到图片
 def url_to_image(url):
@@ -210,14 +210,20 @@ def convertURLImage(url,width=0,height=0,scale=1,force=0,smoth=0):
         path = save_img(url)
     else:
         path = url
-    
+
     if len(path) <= 0:
         return ""
 
+
     img = pexif.JpegFile.fromFile(path)
-    orientation = img.exif.primary.Orientation
-    img.exif.primary.Orientation = [1]
-    img.writeFile(path)
+
+    try:
+        orientation = img.exif.primary.Orientation
+        img.exif.primary.Orientation = [1]
+        img.writeFile(path)
+    except Exception as e:
+        print "读取orientation失败"
+
 
     
     image = cv2.imread(path)
@@ -225,17 +231,21 @@ def convertURLImage(url,width=0,height=0,scale=1,force=0,smoth=0):
 
     t1 = time.time() - start;
     start = time.time()
+
 #锐化图片
     image = convertImage(image,width,height,scale,force,smoth)
     cv2.imwrite(path,image)
     t2 = time.time() - start;
     start = time.time()
 
-    
+
 #修改orientation
-    img = pexif.JpegFile.fromFile(path)
-    img.exif.primary.Orientation = orientation
-    img.writeFile(path)
+    try:
+        img = pexif.JpegFile.fromFile(path)
+        img.exif.primary.Orientation = orientation
+        img.writeFile(path)
+    except Exception as e:
+        print "修改orientation失败"
 
 #图片转码
     image = cv2.imread(path)

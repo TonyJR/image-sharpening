@@ -20,6 +20,10 @@ from concurrent.futures import ThreadPoolExecutor
 reload(sys)
 sys.setdefaultencoding('utf8')
 
+path = "/tmp/com.shiqichuban.image-sharpening"
+if not os.path.exists(path):
+    os.makedirs(path)
+
 class Executor(ThreadPoolExecutor):
     _instance = None
     
