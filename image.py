@@ -215,9 +215,6 @@ def convertURLImage(url,width=0,height=0,scale=1,force=0,smoth=0):
     if len(path) <= 0:
         return ""
 
-
-
-
     try:
         img = pexif.JpegFile.fromFile(path)
         orientation = img.exif.primary.Orientation
@@ -226,9 +223,13 @@ def convertURLImage(url,width=0,height=0,scale=1,force=0,smoth=0):
     except Exception as e:
         print "读取orientation失败"
 
+    if url.find('.png') != -1:
+        with open(path, 'r') as f:
+            result = f.read()
+        return result
+    else:
+        image = cv2.imread(path)
 
-    
-    image = cv2.imread(path)
     rows,cols,channels=image.shape
 
     t1 = time.time() - start;

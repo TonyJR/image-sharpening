@@ -8,7 +8,7 @@ import urllib
 
 
 
-files = ["https://res.shiqichuban.com/v1/image/get/0oM0PYYOqT8Wcbc9EcUjHwfQhFFz7ZX9rAlwj9khYcylwzw_2Ia9NBhTM8zWY0KxVQL0fkAxkqptgbpFCgiGxQ"]
+files = ["test.png"]
 for file in files:
     image.convertURLImage(file,300,0,2,0.5,30)
 
