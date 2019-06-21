@@ -56,13 +56,16 @@ class Handler(tornado.web.RequestHandler):
             result = {}
             result["msg"] = "error"
             self.write(json_encode(result))
+        elif image_url.endswith(('png','PNG')):
+            print("png图片重定向"+image_url)
+            self.redirect(image_url)
         else:
             response = self.converImage(image_url,width,height,force,smoth)
             self.set_header("Content-type", "image/jpeg")
             self.write(response)
 
     def converImage(self,image_url,width,height,force,smoth):
-        bytes = image.convertURLImage(image_url,width,height,1,force,smoth)
+        bytes = image.convertURLImage(image_url,width,height,2,force,smoth)
         return bytes
 
     def process(self, image_url):

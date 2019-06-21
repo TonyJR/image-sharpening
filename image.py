@@ -166,12 +166,17 @@ def turn_light(img, scale, offset):
 def convertImage(image,width,height,scale,force,smoth):
     
     rows,cols,channels=image.shape
+    if width == 0 or cols <= width:
+        print(str(cols)+"_"+str(rows)+"_"+str(width)+"_"+str(height))
+        print("图片小于目标尺寸，不处理")
+        return image
+    else:
+        image = scaleImage(image,width * scale,height * scale)
+        image = sharpening(image,force,smoth)
+        image = sobel(image)
 
-    image = scaleImage(image,width * scale,height * scale)
-    image = sharpening(image,force,smoth/scale)
     if scale != 1:
         image = scaleImage(image,width,height)
-    image = sobel(image)
     return image
 
 
