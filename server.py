@@ -49,14 +49,14 @@ class Handler(tornado.web.RequestHandler):
         image_url = self.get_argument("image_url", default="")
         width = int(self.get_argument("width", default=0))
         height = int(self.get_argument("height", default=0))
-        force = float(self.get_argument("force", default=0.5))
-        smoth = int(self.get_argument("smoth", default=15))
+        force = float(self.get_argument("force", default=0))
+        smoth = int(self.get_argument("smoth", default=0))
         
         if not image_url:
             result = {}
             result["msg"] = "error"
             self.write(json_encode(result))
-        elif image_url.endswith(('png','PNG')):
+        elif image_url.endswith(('png','PNG','gif','GIF')):
             print("png图片重定向"+image_url)
             self.redirect(image_url)
         else:
