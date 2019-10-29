@@ -15,15 +15,19 @@ def save_img(img_url):
         
         #下载图片，并保存到文件夹中
         response = urllib.urlopen(img_url)
-        
-        
+        firstLine = str(response.readline())
         nowTime = time.time()#生成当前的时间
         randomNum = random.randint(0,100000)#生成随机数n,其中0<=n<=100
-        filename = "/tmp/com.shiqichuban.image-sharpening/"+str(nowTime) + "_" + str(randomNum)+".jpg"
+        if firstLine.find('PNG') >= 0:
+            filename = "/tmp/com.shiqichuban.image-sharpening/"+str(nowTime) + "_" + str(randomNum)+".png"
+        else :
+            filename = "/tmp/com.shiqichuban.image-sharpening/"+str(nowTime) + "_" + str(randomNum)+".jpg"
+        
         
         with open(filename, 'wb') as f:
+            f.write(firstLine)
             f.write(response.read())
-    
+        print filename
         return filename
     except IOError as e:
         print '文件操作失败',e
