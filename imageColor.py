@@ -176,16 +176,18 @@ def convertPNGImage(path,red,green,blue):
 def convertJPEGImage(path,red,green,blue):
     try:
         img = pexif.JpegFile.fromFile(path)
-        
-        path = path + ".temp.jpg"
         orientation = img.exif.primary.Orientation
         img.exif.primary.Orientation = [1]
         img.writeFile(path)
     except Exception as e:
         print "读取orientation失败"
+        image = cv2.imread(path)
+        #图像处理
+        image = convertImage(image,red,green,blue)
+        cv2.imwrite(path,image)
+        return path
 
     image = cv2.imread(path)
-
     #图像处理
     image = convertImage(image,red,green,blue)
     cv2.imwrite(path,image)

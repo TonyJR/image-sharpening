@@ -12,6 +12,7 @@ import tornado.ioloop
 import tornado.web
 import tornado.gen
 import image
+import imageColor
 import os
 import time
 
@@ -34,7 +35,7 @@ class Executor(ThreadPoolExecutor):
 
 
 
-class Handler(tornado.web.RequestHandler):
+class ImageHandler(tornado.web.RequestHandler):
     executor = Executor()
     
     def set_default_headers(self):
@@ -72,24 +73,53 @@ class Handler(tornado.web.RequestHandler):
         print image_url
         return ""
 
+class ColorHandler(tornado.web.RequestHandler):
+    executor = Executor()
+    
+    def set_default_headers(self):
+        self.set_header("Access-Control-Allow-Origin", "*") # 这个地方可以写域名
+        self.set_header("Access-Control-Allow-Headers", "Content-Type, Content-MD5, Accept, Accept-Encoding, X-Shiqi-Content-Type, X-Shiqi-Content-Disposition, X-Shiqi-Content-Md5, X-Shiqi-Ctime, X-Shiqi-Filename, X-Shiqi-Position, Refer, User-Agent, Origin, Authorization")
+        self.set_header("Access-Control-Allow-Methods", "POST, GET, OPTIONS")
+        self.set_header("Access-Control-Allow-Max-Age","1728000")
+        self.set_header("Cache-Control","max-age=2628000")
+    
+    @tornado.concurrent.run_on_executor
+    def get(self, *args, **kwargs):
+        image_url = self.get_argument("image_url", default="")
+        color = int(self.get_argument("color", default="0x0"),16)
+        red = color >> 16 & 0xff
+        green = color  >> 8 & 0xff
+        blue = color & 0xff
+        
+        print color,red,green,blue
+        
+        if not image_url:
+            result = {}
+            result["msg"] = "error"
+            self.write(json_encode(result))
+        else:
+            response = self.converImage(image_url,red,green,blue)
+            self.set_header("Content-type", "image/x-png")
+            self.write(response)
+
+    def converImage(self,image_url,red,green,blue):
+        bytes = imageColor.convertURLToData(image_url,red,green,blue)
+        return bytes
+    
+    def process(self, image_url):
+        print image_url
+        return ""
+
 class ImageServer(object):
     
     def __init__(self, port):
         self.port = port
     
     def process(self,server_port):
-        app = tornado.web.Application([(r"/image?", Handler)], )
+        app = tornado.web.Application([(r"/color?", ColorHandler),(r"/image?", ImageHandler)], )
         app.listen(server_port)
-
-#        dir = os.path.dirname(os.path.abspath(sys.argv[0]))
-#        dir = os.path.dirname(dir)
-#
-#        app = tornado.httpserver.HTTPServer(app, ssl_options={
-#                                      "certfile": dir+"/cert/test-kv-pub.ures.shiqichuban.com/test-kv-pub.ures.shiqichuban.com.pem",
-#                                      "keyfile": dir+"/cert/test-kv-pub.ures.shiqichuban.com/test-kv-pub.ures.shiqichuban.com.key",
-#                                      })
-#        app.listen(server_port)
         tornado.ioloop.IOLoop.current().start()
+
 
 if __name__ == "__main__":
     if len(sys.argv)>1:
