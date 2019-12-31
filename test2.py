@@ -9,7 +9,7 @@ import urllib
 
 
 
-files = ["https://res.shiqichuban.com/v1/image/get/crXzkZBtM4OaJoELs-ONNBLCBdbcKaSTQUYUH5oy--t8dC61fPqZl262dZuT5JxCu7edhYwfKezKGB57-0U6mA"]
+files = ["https://res.shiqichuban.com/v1/image/get/9_6OhitL71cOEIvRTHW_LzIIyeL2JY55x3Gyls-lWAJse9SKe445bMDOxTikFK_bmKlgxFxUXfhNAIiprcab3g"]
 for file in files:
     data = imageColor.convertURLToImage(file,0,255,0)
 #    print imageColor.convertURLToData(file,0,255,0)
