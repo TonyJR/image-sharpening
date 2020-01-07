@@ -18,7 +18,7 @@ def save_img(img_url):
         firstLine = str(response.readline())
         nowTime = time.time()#生成当前的时间
         randomNum = random.randint(0,100000)#生成随机数n,其中0<=n<=100
-        if firstLine.find('JPG') >= 0:
+        if firstLine.find('JFIF\0') >= 0:
             filename = "/tmp/com.shiqichuban.image-sharpening/"+str(nowTime) + "_" + str(randomNum)+".jpg"
         else :
             filename = "/tmp/com.shiqichuban.image-sharpening/"+str(nowTime) + "_" + str(randomNum)+".png"
