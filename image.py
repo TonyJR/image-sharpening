@@ -16,17 +16,19 @@ def save_img(img_url):
         #下载图片，并保存到文件夹中
         response = urllib.urlopen(img_url)
         firstLine = str(response.readline())
+
         nowTime = time.time()#生成当前的时间
         randomNum = random.randint(0,100000)#生成随机数n,其中0<=n<=100
         if firstLine.find('JFIF\0') >= 0:
-            filename = "/tmp/com.shiqichuban.image-sharpening/"+str(nowTime) + "_" + str(randomNum)+".jpg"
+            filename = "/tmp/"+str(nowTime) + "_" + str(randomNum)+".jpg"
         else :
-            filename = "/tmp/com.shiqichuban.image-sharpening/"+str(nowTime) + "_" + str(randomNum)+".png"
+            filename = "/tmp/"+str(nowTime) + "_" + str(randomNum)+".png"
         
-        
-        with open(filename, 'wb') as f:
+        with open(filename, 'a+') as f:
+            print '打开文件'
             f.write(firstLine)
             f.write(response.read())
+            f.close()
         print filename
         return filename
     except IOError as e:
@@ -221,7 +223,7 @@ def convertURLImage(url,width=0,height=0,scale=1,force=0,smoth=0):
     else:
         path = url
 
-    if len(path) <= 0:
+    if path is None or len(path) <= 0:
         return ""
 
     try:
