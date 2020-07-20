@@ -24,7 +24,7 @@ def save_img(img_url):
         else :
             filename = "/tmp/"+str(nowTime) + "_" + str(randomNum)+".png"
         
-        with open(filename, 'a+') as f:
+        with open(filename, 'wb') as f:
             print '打开文件'
             f.write(firstLine)
             f.write(response.read())
@@ -238,6 +238,7 @@ def convertURLImage(url,width=0,height=0,scale=1,force=0,smoth=0):
         print("png")
         with open(path, 'r') as f:
             result = f.read()
+        print "PNG文件直接返回"
         return result
     else:
         image = cv2.imread(path)
@@ -270,7 +271,8 @@ def convertURLImage(url,width=0,height=0,scale=1,force=0,smoth=0):
 
     print("下载"+str(t1)+"锐化"+str(t2)+"\n"+str(cols)+"x"+str(rows)+"_"+str(width)+"x"+str(height)+"\n"+url)
     if url.find('http') != -1:
-        os.remove(path)
+        print "删除文件" + path
+#        os.remove(path)
 
     return result
 
